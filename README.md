@@ -1,70 +1,43 @@
-# Getting Started with Create React App
+# React Movie Search
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A bootcamp movie discovery project built with React and React Router. Includes OMDb title search, movie details, four sorting options, skeleton loading states, pagination, and responsive layouts.
 
-## Available Scripts
+## Run locally
 
-In the project directory, you can run:
+1. Run `npm install`.
+2. Get and activate an API key from https://www.omdbapi.com/apikey.aspx.
+3. Copy `.env.example` to `.env.local` and replace the placeholder with your key:
 
-### `npm start`
+   ```env
+   REACT_APP_OMDB_API_KEY=your_actual_key
+   ```
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+4. Run `npm start` and open http://localhost:3000.
+5. Restart the development server whenever you change `.env.local`.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+It does not substitute fake results for live searches. `.env.local` is ignored by Git. Create React App embeds environment values in the browser bundle; this key is visible to visitors. A production app requiring a private credential should call OMDb through a server.
 
-### `npm test`
+## How the pieces fit together
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- `src/App.jsx`: routes for `/` and `/movies/:id`.
+- `src/components/Layout.jsx`: shared navigation, footer, and search/sort state. It stays mounted across routes so Back to movies restores the displayed results.
+- `src/components/Nav.jsx`: search form and fetching with cancellation to prevent old requests overwriting new results.
+- `src/pages/Home.jsx`: sorting, results grid, loading/error/empty states, and pagination.
+- `src/components/MovieCard.jsx`: accessible movie links, poster fallbacks, and skeleton cards.
+- `src/pages/MovieDetails.jsx`: reads `id` with `useParams`, requests full details, and displays plot, cast, rating, awards, and more.
+- `src/api/omdb.js`: shared OMDb request and error handling.
+- `src/index.css`: responsive layout and styling.
 
-### `npm run build`
+Search sends `s=<title>&type=movie&page=<page>`. Details sends `i=<imdbID>&plot=full`. Sort options operate on the current page (up to ten results), as labeled in the UI. Pagination supports OMDb's maximum of 100 pages. Search state is retained during navigation, but resets on a full browser refresh.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+The app uses the supplied course index.css, movie background, and FES logo. The additional hero and framework assets are retained in src/assets for reference. The starting folder contained a users/posts exercise rather than the original movie site. The unused Posts component and HTML exercise files remain as references; active routes now use the movie components.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Check your work
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- `npm test -- --watchAll=false`: automated search, sorting, loading, empty/error, retry, pagination, stale-request, and detail/back-navigation checks with mocked API responses.
+- `npm run build`: production bundle in `build/`.
+- With your key configured, search for Batman, open a movie, then return to the results. Try all four sorts and page controls. Check the layout at desktop, tablet, and phone widths.
 
-### `npm run eject`
+## Deployment
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Deploy the `build/` directory to a static host. Set `REACT_APP_OMDB_API_KEY` in its build environment. Configure an SPA fallback to `index.html` so direct `/movies/:id` links work. `vercel.json` includes this rewrite for Vercel.
