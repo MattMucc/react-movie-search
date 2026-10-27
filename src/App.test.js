@@ -72,10 +72,11 @@ test('ignores outdated search responses', async () => {
 });
 
 test('supports direct detail links and a safe return to home', async () => {
-  window.history.replaceState({}, '', '/movies/tt001');
+  window.history.replaceState({}, '', '/#/movies/tt001');
   fetchMovies.mockRejectedValueOnce(new Error('Movie not found!'));
   render(<App />);
   expect(await screen.findByRole('alert')).toHaveTextContent('Movie not found!');
   userEvent.click(screen.getByRole('link', { name: /Back to movies/ }));
   expect(screen.getByRole('heading', { name: /What are you in the mood/ })).toBeInTheDocument();
 });
+
